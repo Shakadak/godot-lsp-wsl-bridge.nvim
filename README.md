@@ -1,6 +1,15 @@
 # godot-lsp-wsl-bridge.nvim
 Small bridge between Windows Godot's LSP server and WSL Neovim's client.
 
+# Quick Start
+
+```lua
+vim.pack.add({
+  { src = 'https://github.com/Shakadak/godot-lsp-wsl-bridge.nvim.git', version = 'v1.0.1' },
+})
+vim.lsp.enable("gdscript")
+```
+
 # Why not use [`godot-wsl-lsp`](https://github.com/lucasecdb/godot-wsl-lsp) ?
 
 At the time I didn't want to have to deal with `node.js`.
