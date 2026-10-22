@@ -66,8 +66,23 @@ function M.dbg(method, f)
   end
 end
 
+function M.deep_apply(tbl)
+  local merge_apply = function (_, prev_value, value)
+    if type(value) == "function" then
+      return value(prev_value)
+    else
+      return value
+    end
+  end
+
+  return function (params)
+    return vim.tbl_deep_extend(merge_apply, params, tbl)
+  end
+end
+
 function M.textDocument_uri(f)
-  return M.onParams(M.onKey("textDocument", M.onKey("uri", M.onFileUri(f))))
+  return M.deep_apply({ textDocument = { uri = M.onFileUri(f) } })
+  -- return M.onParams(M.onKey("textDocument", M.onKey("uri", M.onFileUri(f))))
 end
 
 function M.identity(params)
@@ -99,7 +114,7 @@ function M.onResults(f)
     if error ~= nil then
       log:write("onResults.error", error)
     end
-    return error, map(results, f)
+    return error, map(f, results)
   end
 end
 

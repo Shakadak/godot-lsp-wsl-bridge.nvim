@@ -1,5 +1,3 @@
-local deepcopy = require("lsp.gdscript.table.addition").deepcopy
-
 local notification_transform = require("lsp.gdscript.transform.notification")
 local server_request_transform = require("lsp.gdscript.transform.server_request")
 
@@ -29,9 +27,10 @@ local wrapper = function(dispatchers, config)
     return dispatchers.server_request(method, new_params)
   end
 
-  local new_dispatchers = deepcopy(dispatchers)
-  new_dispatchers.notification = notification
-  new_dispatchers.server_request = server_request
+  local new_dispatchers = vim.tbl_deep_extend('force', dispatchers, {
+    notification = notification,
+    server_request = server_request,
+  })
 
   -- vim.print(new_dispatchers)
 
@@ -62,9 +61,10 @@ local wrapper = function(dispatchers, config)
     return public_client.notify(method, new_params)
   end
 
-  local new_public_client = deepcopy(public_client)
-  new_public_client.notify = notify
-  new_public_client.request = request
+  local new_public_client = vim.tbl_deep_extend('force', public_client, {
+    notify = notify,
+    request = request,
+  })
 
   return new_public_client
 end

@@ -1,26 +1,19 @@
 -- Client <== Server
 
-local deepcopy = require("lsp.gdscript.table.addition").deepcopy
+local Transform = require("lsp.gdscript.transform")
 
-local transform = require("lsp.gdscript.transform")
+local identity = Transform.identity
+local toUPath = Transform.toUPath
+local onFileUri = Transform.onFileUri
+local defaultTransform = Transform.defaultTransform
 
-local identity = transform.identity
-local toUPath = transform.toUPath
-local onFileUri = transform.onFileUri
-local defaultTransform = transform.defaultTransform
+local publishDiagnostics = Transform.deep_apply({
+  uri = onFileUri(toUPath)
+})
 
-local function publishDiagnostics(params)
-  local new_params = deepcopy(params)
-  new_params.uri = onFileUri(toUPath, params.uri)
-  return new_params
-end
-
-local function changeWorkspace(params)
-  -- log:write('changeWorkspace', params)
-  local new_params = deepcopy(params)
-  new_params.path = toUPath(params.path)
-  return new_params
-end
+local changeWorkspace = Transform.deep_apply({
+  path = toUPath
+})
 
 local notification_transform = {
   ["gdscript/capabilities"] = identity,

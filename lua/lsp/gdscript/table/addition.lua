@@ -16,12 +16,20 @@ function M.deepcopy(orig)
   return copy
 end
 
-function M.map(tbl, f)
-  local t = {}
-  for k, v in pairs(tbl) do
-    t[k] = f(v)
+function M.map(f, maybe_tbl)
+  local function run(tbl)
+    local t = {}
+    for k, v in pairs(tbl) do
+      t[k] = f(v)
+    end
+    return t
   end
-  return t
+
+  if maybe_tbl == nil then
+    return run
+  else
+    return run(maybe_tbl)
+  end
 end
 
 function M.mapKeys(f)
